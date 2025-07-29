@@ -7,10 +7,10 @@
 #define DHTPIN 25
 #define DHTTYPE DHT11
 #define BUTTON_PIN 35
-#define SERVER_URL "http://192.168.1.11:5000/timestamp"  // <-- Modifica IP se necessario
+#define SERVER_URL "IP_ServerFlask"  // <-- Modifica IP
 
-const char* ssid = "Alfio";         // <-- Modifica
-const char* password = "vittoriaa"; // <-- Modifica
+const char* ssid = "yourWifi";         // <-- Modifica
+const char* password = "PasswordWifi"; // <-- Modifica
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -30,8 +30,8 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(BUTTON_PIN) == LOW) {
-    Serial.println("Bottone premuto, lettura e invio dati...");
+  if (digitalRead(BUTTON_PIN) == LOW) {   
+    Serial.println("Bottone premuto, lettura e invio dati...");  // Lettura dati alla pressione del tasto
 
     float temperatura = dht.readTemperature();
     float umidita = dht.readHumidity();
@@ -47,18 +47,10 @@ void loop() {
       HTTPClient http;
       http.setTimeout(5000);
 
-      http.begin(SERVER_URL);
+      http.begin(SERVER_URL);  
       http.addHeader("Content-Type", "text/plain; charset=UTF-8");
 
       int httpResponseCode = http.POST(payload);
-
-      /*if (httpResponseCode > 0) {
-        Serial.print("Risposta server: ");
-        Serial.println(http.getString());
-      } else {
-        Serial.print("Errore nella richiesta POST. Codice: ");
-        Serial.println(httpResponseCode);
-      }*/
 
       http.end();
     } else {
