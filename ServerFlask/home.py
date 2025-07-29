@@ -6,7 +6,6 @@ import subprocess
 app = Flask(__name__)
 BASE_DIR = os.path.join("timestamps", "download")
 
-# Assicurati che la cartella base esista
 os.makedirs(BASE_DIR, exist_ok=True)
 
 @app.route("/", methods=["GET"])
@@ -24,6 +23,7 @@ def index():
     return render_template_string(html, folders=folders)
 
 @app.route("/download/<folder>")
+# Route per il download dei file
 def download_folder(folder):
     path = os.path.join(BASE_DIR, folder)
     files = os.listdir(path)
@@ -34,13 +34,14 @@ def download_folder(folder):
     return html
 
 @app.route("/file/<folder>/<filename>")
+# Download dei file
 def serve_file(folder, filename):
     directory = os.path.join(BASE_DIR, folder)
     return send_from_directory(directory, filename,as_attachment=True)
 
 @app.route("/timestamp", methods=["POST"])
 def timestamp_data():
-    # Leggi i dati dal corpo della richiesta
+    # Legge i dati dal corpo della richiesta
     data = request.get_data(as_text=True).strip()
 
 
@@ -55,12 +56,12 @@ def timestamp_data():
     txt_path = os.path.join(folder_path, "dati_" + timestamp + ".txt")
     ots_path = txt_path + ".ots"
 
-    # Scrivi i dati nel file .txt
+    # Scrive i dati nel file .txt
     with open(txt_path, "w") as f:
         f.write(data)
 
     try:
-        # Esegui la marcatura temporale con 2 calendar funzionanti
+        # Marcatura temporale con 2 calendar funzionanti
         subprocess.run([
             "ots", "stamp",
             "--calendar", "https://a.pool.opentimestamps.org",
