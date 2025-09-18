@@ -1,16 +1,16 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include "DHT.h"
+#include <DHT.h>
 
 // --- CONFIGURAZIONI ---
 #define DHTPIN 25
 #define DHTTYPE DHT11
 #define BUTTON_PIN 35
-#define SERVER_URL "IP_ServerFlask"  // <-- Modifica IP
+#define SERVER_URL ""  // <-- Modifica IP
 
-const char* ssid = "yourWifi";         // <-- Modifica
-const char* password = "PasswordWifi"; // <-- Modifica
+const char* ssid = "name wifi";         // <-- Modifica
+const char* password = "password wifi"; // <-- Modifica
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -49,8 +49,14 @@ void loop() {
 
       http.begin(SERVER_URL);  
       http.addHeader("Content-Type", "text/plain; charset=UTF-8");
-
-      int httpResponseCode = http.POST(payload);
+      int httpResponseCode = http.POST(payload); // Invio dati al server
+      
+      if (httpResponseCode > 0) {
+        String response = http.getString();
+        Serial.println("Risposta del server: " + response);
+      } else {
+        Serial.println("Errore nella richiesta HTTP: " + String(httpResponseCode));
+      }
 
       http.end();
     } else {
